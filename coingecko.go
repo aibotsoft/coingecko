@@ -35,16 +35,16 @@ func NewClient(cfg Config) *Client {
 	}
 	if cfg.RateLimiter == nil {
 		//Our Free API* has a rate limit of 50 calls/minute.
-		cfg.RateLimiter = rate.NewLimiter(rate.Every(time.Minute), 50)
+		cfg.RateLimiter = rate.NewLimiter(rate.Every(time.Millisecond*800), 1)
 	}
 	c := &Client{cfg: cfg, rateLimiter: cfg.RateLimiter}
 	if cfg.HttpClient != nil {
 		c.client = cfg.HttpClient
 	} else {
 		t := http.DefaultTransport.(*http.Transport).Clone()
-		t.MaxIdleConns = 2
-		t.MaxConnsPerHost = 2
-		t.MaxIdleConnsPerHost = 2
+		t.MaxIdleConns = 1
+		t.MaxConnsPerHost = 1
+		t.MaxIdleConnsPerHost = 1
 		t.IdleConnTimeout = 0
 		c.client = &http.Client{Timeout: 10 * time.Second, Transport: t}
 	}
